@@ -18,7 +18,12 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
+import java.net.URI;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -30,6 +35,26 @@ public class AppConfiguration {
         http.csrf(c -> c.disable());
 
         return http.build();
+    }
+
+    @Value("${aws.access.key}")
+    private String accessKey;
+    @Value("${aws.secret.key}")
+    private String secretKey;
+
+    @Bean
+    public S3Client s3Client() {
+        return S3Client.builder()
+                .region(Region.AP_NORTHEAST_2)
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(
+                                        accessKey, secretKey
+                                )
+                        )
+                )
+//                .endpointOverride(URI.create("http://localhost:8080"))
+                .build();
     }
 
 }
