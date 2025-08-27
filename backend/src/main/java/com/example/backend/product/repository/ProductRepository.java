@@ -17,9 +17,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     // 키워드로 상품검색
     @Query("SELECT p FROM Product p WHERE " +
-           "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(p.info) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(p.category) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.info) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.category) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Product> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 
@@ -53,7 +53,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 JOIN p.thumbnails t
                 WHERE t.isMain = true AND p.id IN (
                     SELECT oi.product.id FROM OrderItem oi
-                    WHERE oi.order.createdAt > :oneWeekAgo
                     GROUP BY oi.product.id
                     HAVING SUM(oi.quantity) >= 10
                 )
@@ -63,9 +62,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     // 카테고리 + 키워드 검색
     @Query("SELECT p FROM Product p WHERE p.category = :category AND " +
-           "(LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "OR LOWER(p.info) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "OR LOWER(p.detailText) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+            "(LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.info) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.detailText) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<Product> findByCategoryAndKeyword(@Param("category") String category,
                                            @Param("keyword") String keyword,
                                            Pageable pageable);
